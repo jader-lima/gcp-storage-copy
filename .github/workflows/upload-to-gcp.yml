@@ -1,8 +1,11 @@
 name: Zip and Upload to GCP Bucket
 
 env:
-    TARGET_ZIP: source.zip
-    BUCKET_FOLDER: uploads
+    TRANSIENT_DATALAKE_FILES: transient
+    BUCKET_DATALAKE_FOLDER: transient
+    BUCKET_BIGDATA_JAR_FOLDER: jar
+    BUCKET_BIGDATA_PYSPARK_FOLDER: jar
+    REGION: us-east1
 
 on:
     push:
@@ -38,16 +41,40 @@ jobs:
     - name: Configure Docker
       run: |-
         gcloud auth configure-docker
-    
-    # Step to Upload the file to GCP Bucket
-    - name: Upload to Google Cloud Storage
+
+    # Step to Create GCP Bucket 
+    - name: Create Google Cloud Storage - files
       run: |-
-        TARGET_ZIP=${{ env.TARGET_ZIP }}
-        BUCKET_PATH=${{ secrets.GCP_BUCKET }}/${{ env.BUCKET_FOLDER }}
-        EXTENSION="${TARGET_ZIP##*.}"
-        FILENAME="${TARGET_ZIP%.*}"
-        TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)  # Format: YYYY-MM-DD_HH-MM-SS
-        LATEST_FILENAME="${FILENAME}_latest.${EXTENSION}"
-        NEW_FILENAME="${FILENAME}_${TIMESTAMP}.${EXTENSION}"
-        gsutil cp ./$TARGET_ZIP gs://${BUCKET_PATH}/${LATEST_FILENAME}
-        gsutil cp ./$TARGET_ZIP gs://${BUCKET_PATH}/${NEW_FILENAME}
+        gcloud storage buckets create gs://${{ secrets.GCP_BUCKET_BIGDATA_FILES }} --default-storage-class=nearline --location=${{ env.REGION }}
+
+    # Step to Create GCP Bucket 
+    - name: Create Google Cloud Storage - datalake
+      run: |-
+        gcloud storage buckets create gs://${{ secrets.GCP_BUCKET_DATALAKE }} --default-storage-class=nearline --location=${{ env.REGION }}
+
+    # Step to Create GCP Bucket 
+    - name: Create Google Cloud Storage - dataproc
+      run: |-
+        gcloud storage buckets create gs://${{ secrets.GCP_BUCKET_DATAPROC }} --default-storage-class=nearline --location=${{ env.REGION }}
+    
+    # Step to Upload the file to GCP Bucket - transient files
+    - name: Upload transient files to Google Cloud Storage
+      run: |-
+        TARGET=${{ env.TRANSIENT_DATALAKE_FILES }}
+        BUCKET_PATH=${{ secrets.GCP_BUCKET_DATALAKE }}/${{ env.BUCKET_DATALAKE_FOLDER }}
+        gsutil cp -r ./$TARGET gs://${BUCKET_PATH}
+
+    # Step to Upload the file to GCP Bucket - jar files
+    - name: Upload jar files to Google Cloud Storage
+      run: |-
+        TARGET=${{ env.BUCKET_BIGDATA_JAR_FOLDER }}
+        BUCKET_PATH=${{ secrets.GCP_BUCKET_BIGDATA_FILES }}/${{ env.BUCKET_BIGDATA_JAR_FOLDER }}
+        gsutil cp -r ./$TARGET gs://${BUCKET_PATH}
+
+    # Step to Upload the file to GCP Bucket - pyspark files
+    - name: Upload pyspark files to Google Cloud Storage
+      run: |-
+        TARGET=${{ env.BUCKET_BIGDATA_PYSPARK_FOLDER }}
+        BUCKET_PATH=${{ secrets.GCP_BUCKET_BIGDATA_FILES }}/${{ env.BUCKET_BIGDATA_PYSPARK_FOLDER }}
+        gsutil cp -r ./$TARGET gs://${BUCKET_PATH}
+
