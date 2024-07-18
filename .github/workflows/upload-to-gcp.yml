@@ -65,8 +65,10 @@ jobs:
         BUCKET_PATH=${{ secrets.GCP_BUCKET_DATALAKE }}/${{ env.BUCKET_DATALAKE_FOLDER }}
         EXECUTE=gsutil cp -r ../../$TARGET gs://${BUCKET_PATH}
         echo $EXECUTE
+        pwd
+        ls -la ../../
         gsutil cp -r ../../$TARGET gs://${BUCKET_PATH}
-        
+
 
     # Step to Upload the file to GCP Bucket - jar files
     - name: Upload jar files to Google Cloud Storage
