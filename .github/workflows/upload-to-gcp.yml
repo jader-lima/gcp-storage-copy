@@ -66,6 +66,7 @@ jobs:
         EXECUTE=gsutil cp -r ../../$TARGET gs://${BUCKET_PATH}
         echo $EXECUTE
         gsutil cp -r ../../$TARGET gs://${BUCKET_PATH}
+        
 
     # Step to Upload the file to GCP Bucket - jar files
     - name: Upload jar files to Google Cloud Storage
