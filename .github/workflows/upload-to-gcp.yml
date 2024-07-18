@@ -80,10 +80,3 @@ jobs:
         TARGET=${{ env.BUCKET_BIGDATA_PYSPARK_FOLDER }}
         BUCKET_PATH=${{ secrets.GCP_BUCKET_BIGDATA_FILES }}/${{ env.BUCKET_BIGDATA_PYSPARK_FOLDER }}
         gsutil cp -r ../../$TARGET gs://${BUCKET_PATH}
-
-
-      GCP_BUCKET_DATALAKE=storage_datalake
-                BUCKET_PATH=$GCP_BUCKET_DATALAKE/$BUCKET_DATALAKE_FOLDER
-
-
-
