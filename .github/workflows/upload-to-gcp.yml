@@ -38,21 +38,25 @@ jobs:
     - name: Configure Docker
       run: |-
         gcloud auth configure-docker
+        
 
     # Step to Create GCP Bucket 
     - name: Create Google Cloud Storage - files
       run: |-
         gcloud storage buckets create gs://${{ secrets.GCP_BUCKET_BIGDATA_FILES }} --default-storage-class=nearline --location=${{ env.REGION }}
 
-    # Step to Create GCP Bucket 
-    - name: Create Google Cloud Storage - datalake
-      run: |-
-        gcloud storage buckets create gs://${{ secrets.GCP_BUCKET_DATALAKE }} --default-storage-class=nearline --location=${{ env.REGION }}
 
     # Step to Create GCP Bucket 
     - name: Create Google Cloud Storage - dataproc
       run: |-
         gcloud storage buckets create gs://${{ secrets.GCP_BUCKET_DATAPROC }} --default-storage-class=nearline --location=${{ env.REGION }}
+
+
+    # Step to Create GCP Bucket 
+    - name: Create Google Cloud Storage - datalake
+      run: |-
+        gcloud storage buckets create gs://${{ secrets.GCP_BUCKET_DATALAKE }} --default-storage-class=nearline --location=${{ env.REGION }}
+
     
     # Step to Upload the file to GCP Bucket - transient files
     - name: Upload transient files to Google Cloud Storage
@@ -61,13 +65,14 @@ jobs:
         BUCKET_PATH=${{ secrets.GCP_BUCKET_DATALAKE }}/${{ env.BUCKET_DATALAKE_FOLDER }}
         gsutil cp -r ./$TARGET gs://${BUCKET_PATH}
 
+
     # Step to Upload the file to GCP Bucket - jar files
     - name: Upload jar files to Google Cloud Storage
       run: |-
         TARGET=${{ env.BUCKET_BIGDATA_JAR_FOLDER }}
         BUCKET_PATH=${{ secrets.GCP_BUCKET_BIGDATA_FILES }}/${{ env.BUCKET_BIGDATA_JAR_FOLDER }}
         gsutil cp -r ./$TARGET gs://${BUCKET_PATH}
-        
+
 
     # Step to Upload the file to GCP Bucket - pyspark files
     - name: Upload pyspark files to Google Cloud Storage
