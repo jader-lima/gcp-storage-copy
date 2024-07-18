@@ -57,16 +57,18 @@ jobs:
       run: |-
         gcloud storage buckets create gs://${{ secrets.GCP_BUCKET_DATALAKE }} --default-storage-class=nearline --location=${{ env.REGION }}
 
+    - name: print
+      run: ls -la ../..
+
+    - name: print pwd
+      run: pwd
+
     
     # Step to Upload the file to GCP Bucket - transient files
     - name: Upload transient files to Google Cloud Storage
       run: |-
         TARGET=${{ env.TRANSIENT_DATALAKE_FILES }}
-        BUCKET_PATH=${{ secrets.GCP_BUCKET_DATALAKE }}/${{ env.BUCKET_DATALAKE_FOLDER }}
-        EXECUTE=gsutil cp -r ../../$TARGET gs://${BUCKET_PATH}
-        echo $EXECUTE
-        pwd
-        ls -la ../../
+        BUCKET_PATH=${{ secrets.GCP_BUCKET_DATALAKE }}/${{ env.BUCKET_DATALAKE_FOLDER }}       
         gsutil cp -r ../../$TARGET gs://${BUCKET_PATH}
 
 
