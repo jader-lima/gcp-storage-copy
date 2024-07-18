@@ -3,8 +3,8 @@ name: Zip and Upload to GCP Bucket
 env:
     TRANSIENT_DATALAKE_FILES: transient
     BUCKET_DATALAKE_FOLDER: transient
-    BUCKET_BIGDATA_JAR_FOLDER: jar
-    BUCKET_BIGDATA_PYSPARK_FOLDER: jar
+    BUCKET_BIGDATA_JAR_FOLDER: jars
+    BUCKET_BIGDATA_PYSPARK_FOLDER: scripts
     REGION: us-east1
 
 on:
