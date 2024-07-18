@@ -22,9 +22,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     
-    - name: Zip the folder
-      run: zip -r ./${{ env.TARGET_ZIP }} source/
-
     - name: Authorize GCP
       uses: 'google-github-actions/auth@v2'
       with:
@@ -70,6 +67,7 @@ jobs:
         TARGET=${{ env.BUCKET_BIGDATA_JAR_FOLDER }}
         BUCKET_PATH=${{ secrets.GCP_BUCKET_BIGDATA_FILES }}/${{ env.BUCKET_BIGDATA_JAR_FOLDER }}
         gsutil cp -r ./$TARGET gs://${BUCKET_PATH}
+        
 
     # Step to Upload the file to GCP Bucket - pyspark files
     - name: Upload pyspark files to Google Cloud Storage
@@ -77,4 +75,5 @@ jobs:
         TARGET=${{ env.BUCKET_BIGDATA_PYSPARK_FOLDER }}
         BUCKET_PATH=${{ secrets.GCP_BUCKET_BIGDATA_FILES }}/${{ env.BUCKET_BIGDATA_PYSPARK_FOLDER }}
         gsutil cp -r ./$TARGET gs://${BUCKET_PATH}
+
 
