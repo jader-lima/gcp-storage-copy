@@ -125,6 +125,6 @@ jobs:
         --worker-boot-disk-type ${{ env.DATAPROC_WORKER_BOOT_DISK_TYPE }}
         --worker-boot-disk-size ${{ env.DATAPROC_WORKER_DISK_SIZE }}
         --num-worker-local-ssds ${{ env.DATAPROC_WORKER_NUM_LOCAL_SSD }}
-        --image-version ${{ env.PROJECT_ID }}
+        --image-version ${{ env.DATAPROC_IMAGE_VERSION }}
         --optional-components ${{ env.DATAPROC_COMPONENTS }}
         
