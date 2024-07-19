@@ -6,6 +6,19 @@ env:
     BUCKET_BIGDATA_JAR_FOLDER: jars
     BUCKET_BIGDATA_PYSPARK_FOLDER: scripts
     REGION: us-east1
+    ZONE: us-east1-b
+    DATAPROC_CLUSTER_NAME : dataproc-bigdata-multi-node-cluster
+    DATAPROC_WORKER_TYPE : n2-standard-2
+    DATAPROC_MASTER_TYPE : n2-standard-2
+    DATAPROC_NUM_WORKERS : 2
+    DATAPROC_IMAGE_VERSION : 2.1-debian11
+    DATAPROC_WORKER_NUM_LOCAL_SSD: 1
+    DATAPROC_MASTER_NUM_LOCAL_SSD: 1
+    DATAPROC_MASTER_BOOT_DISK_SIZE: 32   
+    DATAPROC_WORKER_DISK_SIZE: 32
+    DATAPROC_MASTER_BOOT_DISK_TYPE: pd-balanced
+    DATAPROC_WORKER_BOOT_DISK_TYPE: pd-balanced
+    DATAPROC_COMPONENTS: JUPYTER
 
 on:
     push:
@@ -87,3 +100,30 @@ jobs:
         TARGET=${{ env.BUCKET_BIGDATA_PYSPARK_FOLDER }}
         BUCKET_PATH=${{ secrets.GCP_BUCKET_BIGDATA_FILES }}/${{ env.BUCKET_BIGDATA_PYSPARK_FOLDER }}
         gsutil cp -r $TARGET gs://${BUCKET_PATH}
+
+    # Step to create dataproc cluster
+    - name: Upload pyspark files to Google Cloud Storage
+      run: |-
+        TARGET=${{ env.BUCKET_BIGDATA_PYSPARK_FOLDER }}
+        BUCKET_PATH=${{ secrets.GCP_BUCKET_BIGDATA_FILES }}/${{ env.BUCKET_BIGDATA_PYSPARK_FOLDER }}
+        gsutil cp -r $TARGET gs://${BUCKET_PATH}
+
+    - name: Create Dataproc Cluster
+      run: >      
+        gcloud dataproc clusters create ${{ env.DATAPROC_CLUSTER_NAME }}
+        --enable-component-gateway
+        --bucket ${{ env.GCP_BUCKET_DATAPROC }}
+        --region ${{ env.REGION }}
+        --zone ${{ env.ZONE }}
+        --master-machine-type ${{ env.DATAPROC_MASTER_TYPE }}
+        --master-boot-disk-type ${{ env.DATAPROC_MASTER_BOOT_DISK_TYPE }}
+        --master-boot-disk-size ${{ env.DATAPROC_MASTER_BOOT_DISK_SIZE }}
+        --num-master-local-ssds ${{ env.DATAPROC_MASTER_NUM_LOCAL_SSD }}
+        --num-workers ${{ env.DATAPROC_NUM_WORKERS }}
+        --worker-machine-type ${{ env.DATAPROC_WORKER_TYPE }}
+        --worker-boot-disk-type ${{ env.DATAPROC_WORKER_BOOT_DISK_TYPE }}
+        --worker-boot-disk-size ${{ env.DATAPROC_WORKER_DISK_SIZE }}
+        --num-worker-local-ssds ${{ env.DATAPROC_WORKER_NUM_LOCAL_SSD }}
+        --image-version ${{ env.PROJECT_ID }}
+        --optional-components ${{ env.DATAPROC_COMPONENTS }}
+        --project ${{ secrets.PROJECT_ID }}
