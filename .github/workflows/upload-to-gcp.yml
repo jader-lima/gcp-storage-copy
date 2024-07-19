@@ -112,7 +112,8 @@ jobs:
       run: >      
         gcloud dataproc clusters create ${{ env.DATAPROC_CLUSTER_NAME }}
         --enable-component-gateway
-        --bucket ${{ env.GCP_BUCKET_DATAPROC }}
+        --project ${{ secrets.PROJECT_ID }}
+        --bucket ${{ secrets.GCP_BUCKET_DATAPROC }}
         --region ${{ env.REGION }}
         --zone ${{ env.ZONE }}
         --master-machine-type ${{ env.DATAPROC_MASTER_TYPE }}
@@ -126,4 +127,4 @@ jobs:
         --num-worker-local-ssds ${{ env.DATAPROC_WORKER_NUM_LOCAL_SSD }}
         --image-version ${{ env.PROJECT_ID }}
         --optional-components ${{ env.DATAPROC_COMPONENTS }}
-        --project ${{ secrets.PROJECT_ID }}
+        
